@@ -1,0 +1,427 @@
+﻿@page "/"
+
+<PageTitle>Principal</PageTitle>
+
+<h1 style="color: #FFF">Extrato Mensal</h1>
+
+<!-- Modal -->
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal1" tabindex="-2" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #DD3838; color: #fff ">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Despesa</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col text-start">
+                                An item
+                            </div>
+                            <div class="col text-end">
+                                <i class="bi bi-caret-right-fill"></i>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col text-start">
+                                A second item
+                            </div>
+                            <div class="col text-end">
+                                <i class="bi bi-caret-right-fill"></i>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">A third item</li>
+                    <li class="list-group-item">A fourth item</li>
+                    <li class="list-group-item">And a fifth one</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-target="#exampleModal" data-bs-toggle="modal" style="color: #fff">Voltar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: @ModalTransactionTypeColor; color: #fff ">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">@ModalTransactionType</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-auto">
+                            <label for="exampleFormControlInput1" class="form-label">Valor</label>
+                            <input class="form-control" id="inputamount" style="display: block;"
+                                   type="text">
+                        </div>
+                        <div class="col-auto">
+                            <label for="exampleFormControlInput2" class="form-label">Data</label>
+                            <input type="date" class="form-control" id="exampleFormControlInput2" @bind-value="@ModalTransactionDate">
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="exampleFormControlInput3" class="form-label">Descrição</label>
+                            <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
+                            <datalist id="datalistOptions">
+                                <option value="San Francisco" />
+                                <option value="New York" />
+                                <option value="Seattle" />
+                                <option value="Los Angeles" />
+                                <option value="Chicago" />
+                            </datalist>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="exampleFormControlInput4" class="form-label">Categoria</label>
+                            <button type="button" class="form-control btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal1">Selecione <i class="bi bi-caret-right-fill"></i> </button>
+                        </div>
+                        <div class="col-6">
+                            <label for="exampleFormControlInput4" class="form-label">Tipo</label>
+                            <select class="form-select" aria-label="Selecione o tipo da transação" @onchange="ChangeTransactionType">
+                                <option selected>Despesa</option>
+                                <option value="1">Receita</option>
+                            </select>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="color: #fff">Close</button>
+                <button type="button" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Adicionar</button>
+            </div>
+        </div>
+    </div>
+</div>
+@* <i class="bi-alarm" style="font-size: 2rem; color: cornflowerblue;"></i> *@
+<div class="btn-toolbar" role="toolbar">
+    <button type="button" class="btn btn-light" style="margin-right: 10px;" @onclick="() => PreviousMonth()"><i class="bi bi-caret-left-fill"></i></button>
+    <div style="max-width: 200px;">
+        <InputDate Type="InputDateType.Month" class="form-control" @bind-Value="ActualDate" @bind-Value:after="ChangeMonth" />
+    </div>
+    <button type="button" class="btn btn-light" style="margin-left: 10px;" @onclick="() => NextMonth()"><i class="bi bi-caret-right-fill"></i></button>
+</div>
+<br />
+<div class="row">
+    <div class="col-lg-6" style="max-width: 600px;">
+        <div style="max-width: 500px;">
+            <div class="card">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col text-start">
+                                <h4 class="fw-bold">Saldo</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-start">
+                                <h2 class="fw-light" style="color: #0B9C11">R$ 500,00</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div style="max-width: 500px;">
+            <div class="card">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col text-start">
+                                <p class="fw-bold">Entradas</p>
+                            </div>
+                            <div class="col text-end">
+                                <p class="fw-light" style="color: #0B9C11">R$ 1000,00</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-start">
+                                <p class="fw-bold">Saídas</p>
+                            </div>
+                            <div class="col text-end">
+                                <p class="fw-light" style="color: #DD3838">R$ -500,00</p>
+                            </div>
+                        </div>
+                        <hr style="margin-bottom: 10px; margin-top: -10px;" />
+                        <div class="row">
+                            <div class="col text-end">
+                                <p class="fw-light" style="color: #0B9C11">R$ 500,00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div style="max-width: 500px;">
+            <div class="card">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col text-start">
+                                <h4 class="fw-bold" style="color: @ComparativeSetupColor">@ComparativeSetup</h4>
+                            </div>
+                            <div class="col text-end">
+                                <a class="icon-link" @onclick="() => ChangeComparativeSetupOut()" @onclick:preventDefault>
+                                    <i class="bi bi-arrow-down-circle-fill" style="color: #DD3838;"></i>
+                                </a>
+                                <a class="icon-link" @onclick="() => ChangeComparativeSetupIn()" @onclick:preventDefault>
+                                    <i class="bi bi-arrow-up-circle-fill" style="color: #0B9C11;"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="text-center">
+                                                <p class="fs-5" style="margin-bottom: 0;">-500,00</p>
+                                                <p class="fs-6 text-center">@PreviousMonthName</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="text-center">
+                                                <p class="fs-5" style="margin-bottom: 0;color: #0B9C11;">50%</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="text-center">
+                                                <p class="fs-5" style="margin-bottom: 0;">-250,00</p>
+                                                <p class="fs-6 text-center">@MonthName</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+    </div>
+    <div class="col-lg-6">
+        <div class="d-grid gap-0">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <i class="bi bi-plus-lg"></i> Adicionar transação
+            </button>
+        </div>
+
+        <br />
+        <div class="card border-light" style="background-color: transparent">
+
+            <div class="card-body">
+                <h3 style="color: #FFF">Transações de @MonthName</h3>
+                <div class="card">
+                    <div class="card-header">
+                        10/08/2024
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col text-start">
+                                    <p class="fw-bold" style="margin-bottom: 0; font-size: 1.2rem;">Salário</p>
+                                    <p class="fw-light" style="margin-bottom: 0; font-size: 0.8rem;"><i class="bi bi-tags-fill"></i> Salário</p>
+                                </div>
+                                <div class="col" style="display: flex; justify-content:flex-end; align-items: center;">
+                                    <p class="fw-light" style="color: #0B9C11; margin-bottom: 0;">R$ 1000,00</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col text-start">
+                                    <p class="fw-bold" style="margin-bottom: 0;">Supermercado</p>
+                                    <p class="fw-light" style="margin-bottom: 0; font-size: 0.8rem;"><i class="bi bi-tags-fill"></i>Supermercado</p>
+
+                                </div>
+                                <div class="col" style="display: flex; justify-content:flex-end; align-items: center;">
+                                    <p class="fw-light" style="color: #DD3838; margin-bottom: 0;">-R$ 120,00</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col text-start">
+                                    <p class="fw-bold" style="margin-bottom: 0;">Energia</p>
+                                    <p class="fw-light" style="margin-bottom: 0; font-size: 0.8rem;"><i class="bi bi-tags-fill"></i>Energia</p>
+                                </div>
+                                <div class="col" style="display: flex; justify-content:flex-end; align-items: center;">
+                                    <p class="fw-light" style="color: #DD3838; margin-bottom: 0;">-R$ 180,00</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <br />
+                <div class="card">
+                    <div class="card-header">
+                        11/08/2024
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col text-start">
+                                    <p class="fw-bold" style="margin-bottom: 0;">Transporte Uber</p>
+                                    <p class="fw-light" style="margin-bottom: 0; font-size: 0.8rem;"><i class="bi bi-tags-fill"></i>Transporte</p>
+                                </div>
+                                <div class="col" style="display: flex; justify-content:flex-end; align-items: center;">
+                                    <p class="fw-light" style="color: #DD3838; margin-bottom: 0;">-R$ 70,00</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col text-start">
+                                    <p class="fw-bold" style="margin-bottom: 0;">Internet</p>
+                                    <p class="fw-light" style="margin-bottom: 0; font-size: 0.8rem;"><i class="bi bi-tags-fill"></i>Internet</p>
+                                </div>
+                                <div class="col" style="display: flex; justify-content:flex-end; align-items: center;">
+                                    <p class="fw-light" style="color: #DD3838; margin-bottom: 0;">-R$ 150,00</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // Get the input element with the id "inputamount"
+    const inputAmount = document.getElementById("inputamount");
+
+    // Add an event listener to listen for input changes in the input element
+    inputAmount.addEventListener("input", function () {
+        // Call the formatCurrency function when the input value changes, passing the input element and its color element
+        formatCurrency(this, inputAmount);
+    });
+
+    // The formatCurrency function takes an input element and an inputColor element
+    function formatCurrency(input, inputColor) {
+        // Remove non-numeric characters from the input value
+        let value = input.value.replace(/[^\d]+/g, '');
+
+        // Split the value into whole and decimal parts
+        const wholePart = value.slice(0, -2);
+        const decimalPart = value.slice(-2);
+
+        // Format the whole part with commas every three digits
+        let formattedValue = wholePart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+        // Add the decimal point and the last two digits
+        formattedValue += `,${decimalPart}`;
+        // Update the input value with the formatted value and add $ symbol
+        input.value = formattedValue;
+    }
+</script>
+@code {
+    private DateOnly ActualDate { get; set; }
+
+    private string MonthName { get; set; }
+
+    private string PreviousMonthName { get; set; }
+
+    private string ComparativeSetup { get; set; } = "Saídas";
+
+    private string ComparativeSetupColor { get; set; } = "#DD3838";
+
+    private string ModalTransactionType { get; set; } = "Despesa";
+    private string ModalTransactionTypeColor { get; set; } = "#DD3838";
+    private DateOnly ModalTransactionDate { get; set; } = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        ActualDate = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1);
+        MonthName = Months.Where(x => x.Number == ActualDate.Month).First().Name;
+        PreviousMonthName = Months.Where(x => x.Number == ActualDate.AddMonths(-1).Month).First().Name;
+    }
+
+    public void ChangeTransactionType()
+    {
+        if (ModalTransactionType != "Receita")
+        {
+            ModalTransactionType = "Receita";
+            ModalTransactionTypeColor = "#0B9C11";
+        }
+        else
+        {
+            ModalTransactionType = "Despesa";
+            ModalTransactionTypeColor = "#DD3838";
+        }
+    }
+
+    public void ChangeComparativeSetupOut()
+    {
+        ComparativeSetup = "Saídas";
+        ComparativeSetupColor = "#DD3838";
+    }
+
+    public void ChangeComparativeSetupIn()
+    {
+        ComparativeSetup = "Entradas";
+        ComparativeSetupColor = "#0B9C11";
+    }
+
+    public void ChangeMonth()
+    {
+        MonthName = Months.Where(x => x.Number == ActualDate.Month).First().Name;
+        PreviousMonthName = Months.Where(x => x.Number == ActualDate.AddMonths(-1).Month).First().Name;
+    }
+
+    public void NextMonth()
+    {
+        ActualDate = ActualDate.AddMonths(1);
+        MonthName = Months.Where(x => x.Number == ActualDate.Month).First().Name;
+        PreviousMonthName = Months.Where(x => x.Number == ActualDate.AddMonths(-1).Month).First().Name;
+    }
+
+    public void PreviousMonth()
+    {
+        ActualDate = ActualDate.AddMonths(-1);
+        MonthName = Months.Where(x => x.Number == ActualDate.Month).First().Name;
+        PreviousMonthName = Months.Where(x => x.Number == ActualDate.AddMonths(-1).Month).First().Name;
+    }
+
+    private List<Month> Months = new() {
+      new(){ Name =  "Janeiro", Number = 1 },
+      new(){ Name =  "Fevereiro", Number = 2 },
+      new(){ Name =  "Março", Number = 3 },
+      new(){ Name =  "Abril", Number = 4 },
+      new(){ Name =  "Maio", Number = 5 },
+      new(){ Name =  "Junho", Number = 6},
+      new(){ Name =  "Julho", Number = 7 },
+      new(){ Name =  "Agosto", Number = 8 },
+      new(){ Name =  "Setembro", Number = 9 },
+      new(){ Name =  "Outubro", Number = 10 },
+      new(){ Name =  "Novembro", Number = 11 },
+      new(){ Name =  "Dezembro", Number = 12 },
+    };
+
+    private class Month
+    {
+        public string Name { get; set; }
+        public int Number { get; set; }
+    }
+}
