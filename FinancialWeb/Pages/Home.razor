@@ -1,43 +1,67 @@
 ﻿@page "/"
+@using Models
+@using Models.UiModels
 
 <PageTitle>Principal</PageTitle>
 
 <h1 style="color: #FFF">Extrato Mensal</h1>
 
-<!-- Modal -->
-<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal1" tabindex="-2" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+<!-- Modal Sub Categories-->
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="ModalSubCategories" tabindex="-1" aria-labelledby="ModalSubCategories" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: #DD3838; color: #fff ">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Despesa</h1>
+            <div class="modal-header" style="background-color: @ModalTransactionTypeColor; color: #fff ">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Sub Categorias</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <div class="row">
-                            <div class="col text-start">
-                                An item
+                <div class="list-group">
+                    @foreach (var category in Categories)
+                    {
+                        <a class="list-group-item list-group-item-action" href="#" data-bs-target="#exampleModal" data-bs-toggle="modal" @onclick="() => SetSelectedCategory(category.Id)">
+                            <div class="row">
+                                <div class="col text-start">
+                                    @category.Name
+                                </div>
+                                @*       <div class="col text-end">
+                            <i class="bi bi-caret-right-fill"></i>
+                            </div> *@
                             </div>
-                            <div class="col text-end">
-                                <i class="bi bi-caret-right-fill"></i>
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-target="#ModalCategories" data-bs-toggle="modal" style="color: #fff">Voltar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Categories-->
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="ModalCategories" tabindex="-1" aria-labelledby="ModalCategories" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: @ModalTransactionTypeColor; color: #fff ">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Categorias</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group">
+                    @foreach (var category in Categories)
+                    {
+                        @* <a class="list-group-item list-group-item-action" href="#" data-bs-target="#exampleModal" data-bs-toggle="modal" @onclick="() => SetSelectedCategory(category.Id)"> *@
+                        <a class="list-group-item list-group-item-action" href="#" data-bs-toggle="modal" data-bs-target="#ModalSubCategories" >
+                            <div class="row">
+                                <div class="col text-start">
+                                    @category.Name
+                                </div>
+                                @*       <div class="col text-end">
+                            <i class="bi bi-caret-right-fill"></i>
+                            </div> *@
                             </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row">
-                            <div class="col text-start">
-                                A second item
-                            </div>
-                            <div class="col text-end">
-                                <i class="bi bi-caret-right-fill"></i>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">A third item</li>
-                    <li class="list-group-item">A fourth item</li>
-                    <li class="list-group-item">And a fifth one</li>
-                </ul>
+                        </a>
+                    }
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-target="#exampleModal" data-bs-toggle="modal" style="color: #fff">Voltar</button>
@@ -45,7 +69,7 @@
         </div>
     </div>
 </div>
-<!-- Modal -->
+<!-- Modal Transaction-->
 <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -84,7 +108,9 @@
                     <div class="row">
                         <div class="col-6">
                             <label for="exampleFormControlInput4" class="form-label">Categoria</label>
-                            <button type="button" class="form-control btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal1">Selecione <i class="bi bi-caret-right-fill"></i> </button>
+                            <button type="button" class="form-control btn btn-info" data-bs-toggle="modal" data-bs-target="#ModalCategories">
+                                @SelectedCategory <i class="bi bi-caret-right-fill"></i>
+                            </button>
                         </div>
                         <div class="col-6">
                             <label for="exampleFormControlInput4" class="form-label">Tipo</label>
@@ -347,8 +373,13 @@
     private string ComparativeSetupColor { get; set; } = "#DD3838";
 
     private string ModalTransactionType { get; set; } = "Despesa";
+
     private string ModalTransactionTypeColor { get; set; } = "#DD3838";
+
     private DateOnly ModalTransactionDate { get; set; } = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+    private List<Category> Categories { get; set; }
+    private string SelectedCategory { get; set; } = "Selecione";
 
 
     protected override async Task OnInitializedAsync()
@@ -356,6 +387,12 @@
         ActualDate = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1);
         MonthName = Months.Where(x => x.Number == ActualDate.Month).First().Name;
         PreviousMonthName = Months.Where(x => x.Number == ActualDate.AddMonths(-1).Month).First().Name;
+        Categories = GetCategoriesRes;
+    }
+
+    public void SetSelectedCategory(int categoryId)
+    {
+        SelectedCategory = Categories.Where(x => x.Id == categoryId).First().Name;
     }
 
     public void ChangeTransactionType()
@@ -405,23 +442,30 @@
     }
 
     private List<Month> Months = new() {
-      new(){ Name =  "Janeiro", Number = 1 },
-      new(){ Name =  "Fevereiro", Number = 2 },
-      new(){ Name =  "Março", Number = 3 },
-      new(){ Name =  "Abril", Number = 4 },
-      new(){ Name =  "Maio", Number = 5 },
-      new(){ Name =  "Junho", Number = 6},
-      new(){ Name =  "Julho", Number = 7 },
-      new(){ Name =  "Agosto", Number = 8 },
-      new(){ Name =  "Setembro", Number = 9 },
-      new(){ Name =  "Outubro", Number = 10 },
-      new(){ Name =  "Novembro", Number = 11 },
-      new(){ Name =  "Dezembro", Number = 12 },
+        new("Janeiro", 1 ),
+      new("Fevereiro",2),
+      new("Março",3),
+      new("Abril",4),
+      new("Maio",5),
+      new("Junho",6),
+      new("Julho",7),
+      new("Agosto",8),
+      new("Setembro",9),
+      new("Outubro",10),
+      new("Novembro",11),
+      new("Dezembro",12),
     };
 
-    private class Month
+    private record Month(string Name, int Number);
+
+    #region MockModels
+    List<Category> GetCategoriesRes = new List<Category>()
     {
-        public string Name { get; set; }
-        public int Number { get; set; }
-    }
+        new Category(){Id=1,Name="Salário",Type = TransactionType.Income},
+        new Category(){Id=2,Name="Carro",Type = TransactionType.Expense},
+        new Category(){Id=3,Name="Alimentação",Type = TransactionType.Expense},
+        new Category(){Id=4,Name="Lazer",Type = TransactionType.Expense},
+        new Category(){Id=5,Name="Casa",Type = TransactionType.Expense},
+    };
+    #endregion
 }
