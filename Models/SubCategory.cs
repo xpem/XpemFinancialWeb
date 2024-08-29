@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Models
+﻿namespace Models
 {
-    public class SubCategory
+    public record SubCategory
     {
-        public int Id { get; set; }
+        public int Id;
 
-        public string Name { get; set; }
+        public required string Name;
 
-        public int CategoryId { get; set; }
+        public int CategoryId;
     }
 }

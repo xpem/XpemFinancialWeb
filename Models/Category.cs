@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Models
+﻿namespace Models
 {
-    public class Category
+    public record Category
     {
-        public int Id { get; set; }
+        public int Id;
 
-        public string Name { get; set; }
+        public required string Name;
 
         //public string Color { get; set; }
 
-        public TransactionType Type { get; set; }
+        public TransactionType Type;
+
+        public List<SubCategory>? SubCategories;
+
     }
 }

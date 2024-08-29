@@ -16,19 +16,20 @@
             </div>
             <div class="modal-body">
                 <div class="list-group">
-                    @foreach (var category in Categories)
-                    {
-                        <a class="list-group-item list-group-item-action" href="#" data-bs-target="#exampleModal" data-bs-toggle="modal" @onclick="() => SetSelectedCategory(category.Id)">
-                            <div class="row">
-                                <div class="col text-start">
-                                    @category.Name
-                                </div>
-                                @*       <div class="col text-end">
+                    @if (SelectedCaregory is not null && SelectedCaregory.SubCategories is not null) foreach (var subCategory in SelectedCaregory.SubCategories)
+                        {
+                            <a class="list-group-item list-group-item-action" href="#" data-bs-target="#exampleModal" data-bs-toggle="modal">
+                                <div class="row">
+                                    <div class="col text-start">
+                                        @subCategory.Name
+                                    </div>
+                                    @*       <div class="col text-end">
                             <i class="bi bi-caret-right-fill"></i>
                             </div> *@
-                            </div>
-                        </a>
-                    }
+                                </div>
+                            </a>
+                        }
+
                 </div>
             </div>
             <div class="modal-footer">
@@ -49,17 +50,32 @@
                 <div class="list-group">
                     @foreach (var category in Categories)
                     {
-                        @* <a class="list-group-item list-group-item-action" href="#" data-bs-target="#exampleModal" data-bs-toggle="modal" @onclick="() => SetSelectedCategory(category.Id)"> *@
-                        <a class="list-group-item list-group-item-action" href="#" data-bs-toggle="modal" data-bs-target="#ModalSubCategories" >
-                            <div class="row">
-                                <div class="col text-start">
-                                    @category.Name
+                        @if (category.SubCategories?.Count > 0)
+                        {
+                            @* <a class="list-group-item list-group-item-action" href="#" data-bs-target="#exampleModal" data-bs-toggle="modal" @onclick="() => SetSelectedCategory(category.Id)"> *@
+                            <a class="list-group-item list-group-item-action" href="#" data-bs-toggle="modal" data-bs-target="#ModalSubCategories" @onclick="() => SetSubCategoryToShow(category.Id)">
+                                <div class="row">
+                                    <div class="col text-start">
+                                        @category.Name
+                                    </div>
+                                    <div class="col text-end">
+                                        <i class="bi bi-caret-right-fill"></i>
+                                    </div>
                                 </div>
-                                @*       <div class="col text-end">
-                            <i class="bi bi-caret-right-fill"></i>
-                            </div> *@
-                            </div>
-                        </a>
+                            </a>
+
+
+                        }
+                        else
+                        {
+                            <a class="list-group-item list-group-item-action" href="#" data-bs-target="#exampleModal" data-bs-toggle="modal" @onclick="() => SetSelectedCategory(category.Id)">
+                                <div class="row">
+                                    <div class="col text-start">
+                                        @category.Name
+                                    </div>
+                                </div>
+                            </a>
+                        }
                     }
                 </div>
             </div>
@@ -83,7 +99,7 @@
                         <div class="col-auto">
                             <label for="exampleFormControlInput1" class="form-label">Valor</label>
                             <input class="form-control" id="inputamount" style="display: block;"
-                                   type="text">
+                                   type="text" placeholder="0,00">
                         </div>
                         <div class="col-auto">
                             <label for="exampleFormControlInput2" class="form-label">Data</label>
@@ -94,7 +110,7 @@
                     <div class="row">
                         <div class="col-12">
                             <label for="exampleFormControlInput3" class="form-label">Descrição</label>
-                            <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
+                            <input class="form-control" list="datalistOptions" id="exampleDataList">
                             <datalist id="datalistOptions">
                                 <option value="San Francisco" />
                                 <option value="New York" />
@@ -109,7 +125,7 @@
                         <div class="col-6">
                             <label for="exampleFormControlInput4" class="form-label">Categoria</label>
                             <button type="button" class="form-control btn btn-info" data-bs-toggle="modal" data-bs-target="#ModalCategories">
-                                @SelectedCategory <i class="bi bi-caret-right-fill"></i>
+                                @SelectedCategoryNameModalTransaction <i class="bi bi-caret-right-fill"></i>
                             </button>
                         </div>
                         <div class="col-6">
@@ -379,7 +395,10 @@
     private DateOnly ModalTransactionDate { get; set; } = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
     private List<Category> Categories { get; set; }
-    private string SelectedCategory { get; set; } = "Selecione";
+
+    private string SelectedCategoryNameModalTransaction { get; set; } = "Selecione";
+
+    private Category? SelectedCaregory { get; set; } 
 
 
     protected override async Task OnInitializedAsync()
@@ -392,7 +411,12 @@
 
     public void SetSelectedCategory(int categoryId)
     {
-        SelectedCategory = Categories.Where(x => x.Id == categoryId).First().Name;
+        SelectedCategoryNameModalTransaction = Categories.Where(x => x.Id == categoryId).First().Name;
+    }
+
+    public void SetSubCategoryToShow(int categoryId)
+    {
+        SelectedCaregory = Categories.Where(x => x.Id == categoryId).First();
     }
 
     public void ChangeTransactionType()
@@ -462,8 +486,25 @@
     List<Category> GetCategoriesRes = new List<Category>()
     {
         new Category(){Id=1,Name="Salário",Type = TransactionType.Income},
-        new Category(){Id=2,Name="Carro",Type = TransactionType.Expense},
-        new Category(){Id=3,Name="Alimentação",Type = TransactionType.Expense},
+        new Category(){Id=2,Name="Carro",Type = TransactionType.Expense,
+         SubCategories = new List<SubCategory>()
+        {
+            new(){Name = "Manutenção",CategoryId = 2,Id = 1},
+            new(){Name = "Combustivel",CategoryId = 2,Id = 2},
+            new(){Name = "Acessórios",CategoryId = 2,Id = 3},
+            new(){Name = "Estacionamento",CategoryId = 2,Id = 4},
+            new(){Name = "Multas",CategoryId = 2,Id = 5},
+            new(){Name = "Pedagio",CategoryId = 2,Id = 6}
+        }
+        },
+        new Category(){Id=3,Name="Alimentação",Type = TransactionType.Expense,
+        SubCategories = new List<SubCategory>()
+        {
+            new(){Name = "Almoço",CategoryId = 3,Id = 7},
+            new(){Name = "Lanche",CategoryId = 3,Id = 8},
+            new(){Name = "Padaria",CategoryId = 3,Id = 9}
+        }
+        },
         new Category(){Id=4,Name="Lazer",Type = TransactionType.Expense},
         new Category(){Id=5,Name="Casa",Type = TransactionType.Expense},
     };
